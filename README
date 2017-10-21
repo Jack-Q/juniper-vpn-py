@@ -14,3 +14,8 @@ Alternate instructions to allow juniper-vpn.py to perform authentication and
 tncc.py to perform host checking are contained in:
 
 README.authenticator
+
+Quick reference for generating DSID and passing it to openconnect
+(ensure openconnect is corrected configured in current system)
+(require privilege to create network tunnel)
+sudo ./juniper-vpn.py --host <Server Host> --username <Username> --password <Password> --stdin 'DSID=%DSID%' openconnect --juniper '%HOST%' --cookie-on-stdin

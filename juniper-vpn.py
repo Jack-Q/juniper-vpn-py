@@ -102,6 +102,11 @@ class juniper_vpn(object):
             args.certs = certs
 
         self.br = mechanize.Browser()
+        
+        # Un-comment the following line to inspect errors in page
+        # self.br.set_debug_redirects(True)
+        # self.br.set_debug_responses(True)
+        # self.br.set_debug_http(True)
 
         self.cj = cookielib.LWPCookieJar()
         self.br.set_cookiejar(self.cj)
@@ -125,9 +130,12 @@ class juniper_vpn(object):
         if args.user_agent:
             self.user_agent = args.user_agent
         else:
-            self.user_agent = 'Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.0.1) Gecko/2008071615 Fedora/3.0.1-1.fc9 Firefox/3.0.1'
+            self.user_agent = 'PulseSecureAndroid (Compatible with JunosPulseAndroid) Mozilla/5.0 (Linux; Android 5.1.1) PulseSecure(Version-6.5.1(h294406.4)) Android'
 
-        self.br.addheaders = [('User-agent', self.user_agent)]
+        self.br.addheaders = [
+            ('User-agent', self.user_agent),
+            ('X-Requested-With', 'net.pulsesecure.pulsesecure')
+        ]
 
         self.last_action = None
         self.needs_2factor = False
@@ -208,7 +216,7 @@ class juniper_vpn(object):
                 self.key = getpass.getpass('Two-factor key:')
         else:
             self.key = None
-
+        
         # Enter username/password
         self.br.select_form(nr=0)
         self.br.form['username'] = self.args.username
@@ -243,6 +251,7 @@ class juniper_vpn(object):
     def action_continue(self):
         # Yes, I want to terminate the existing connection
         self.br.select_form(nr=0)
+        self.br.form.new_control('hidden', 'btnContinue', {'name':'btnContinue', 'value':'1'})
         self.r = self.br.submit()
 
     def action_connect(self):
